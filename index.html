@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LPU Assignment Tracker | Lovely Professional University</title>
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Main Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-badge">LPU</div>
+        <div>
+          <h1>📚 LPU Assignment Tracker</h1>
+          <p class="tagline">Track your Continuous Assessment (CA) & Lab Submissions</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="themeToggleBtn" class="btn btn-secondary" aria-label="Toggle Dark Mode">
+          🌙 Dark Mode
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-wrapper">
+
+    <!-- Due Soon Reminder Banner (hidden by default, shown if pending items <= 24 hrs) -->
+    <div id="dueSoonBanner" class="due-soon-banner hidden">
+      <div class="banner-icon">⏰</div>
+      <div class="banner-text">
+        <strong>Deadline Alert!</strong> You have <span id="dueSoonCount">0</span> assignment(s) due within the next 24 hours. Make sure to upload on UMS portal on time!
+      </div>
+    </div>
+
+    <!-- Dashboard Statistics Cards -->
+    <section class="stats-section">
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-info">
+          <span class="stat-number" id="statTotal">0</span>
+          <span class="stat-label">Total Assignments</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-pending">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+          <span class="stat-number" id="statPending">0</span>
+          <span class="stat-label">Pending</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-submitted">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <span class="stat-number" id="statSubmitted">0</span>
+          <span class="stat-label">Submitted</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-overdue">
+        <div class="stat-icon">⚠️</div>
+        <div class="stat-info">
+          <span class="stat-number" id="statOverdue">0</span>
+          <span class="stat-label">Overdue</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Submission Progress Bar -->
+    <section class="progress-section">
+      <div class="progress-header">
+        <span class="progress-title">🎯 Submission Progress</span>
+        <span class="progress-percentage" id="progressPercentage">0%</span>
+      </div>
+      <div class="progress-bar-track">
+        <div id="progressBarFill" class="progress-bar-fill" style="width: 0%;"></div>
+      </div>
+      <div class="progress-caption" id="progressCaption">0 of 0 assignments submitted</div>
+    </section>
+
+    <!-- Two-Column Workspace Layout -->
+    <div class="workspace-grid">
+
+      <!-- Left Column: Add / Edit Assignment Form -->
+      <section class="form-section">
+        <div class="card form-card">
+          <div class="card-header">
+            <h2 id="formTitle">➕ Add New Assignment</h2>
+            <p class="form-subtitle">Enter course details and submission deadline</p>
+          </div>
+
+          <!-- Error Message Banner -->
+          <div id="formAlert" class="alert-message hidden"></div>
+
+          <form id="assignmentForm" novalidate>
+            <!-- Hidden field for edit mode -->
+            <input type="hidden" id="editId" value="">
+
+            <div class="form-group">
+              <label for="subjectName">Subject Name <span class="required">*</span></label>
+              <input type="text" id="subjectName" placeholder="e.g. Data Structures" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-half">
+                <label for="courseCode">Course Code <span class="required">*</span></label>
+                <input type="text" id="courseCode" placeholder="e.g. CSE121" required>
+              </div>
+
+              <div class="form-group col-half">
+                <label for="assignmentType">Type <span class="required">*</span></label>
+                <select id="assignmentType" required>
+                  <option value="CA1">CA1</option>
+                  <option value="CA2">CA2</option>
+                  <option value="CA3">CA3</option>
+                  <option value="Lab File">Lab File</option>
+                  <option value="Project">Project</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="assignmentTitle">Assignment Title <span class="required">*</span></label>
+              <input type="text" id="assignmentTitle" placeholder="e.g. Binary Search Tree Implementation" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-half">
+                <label for="deadline">Deadline (Date & Time) <span class="required">*</span></label>
+                <input type="datetime-local" id="deadline" required>
+              </div>
+
+              <div class="form-group col-half">
+                <label for="priority">Priority <span class="required">*</span></label>
+                <select id="priority" required>
+                  <option value="Medium">Medium ⚡</option>
+                  <option value="High">High 🔴</option>
+                  <option value="Low">Low 🟢</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="notes">Notes / Instructions <span class="optional">(Optional)</span></label>
+              <textarea id="notes" rows="2" placeholder="e.g. Upload PDF report and ZIP code file on UMS portal..."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="submitBtn" class="btn btn-primary">Add Assignment ➕</button>
+              <button type="button" id="cancelEditBtn" class="btn btn-secondary hidden">Cancel Edit ✕</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Right Column: Search, Filter, Sort & Assignments List -->
+      <section class="list-section">
+        
+        <!-- Search and Filter Bar -->
+        <div class="card toolbar-card">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search by title, subject, or course code...">
+            <button id="clearSearchBtn" class="clear-search-btn hidden" title="Clear search">✕</button>
+          </div>
+
+          <div class="filter-controls">
+            <div class="filter-item">
+              <label for="statusFilter">Status:</label>
+              <select id="statusFilter">
+                <option value="all">All Status</option>
+                <option value="pending">⏳ Pending</option>
+                <option value="submitted">✅ Submitted</option>
+                <option value="overdue">⚠️ Overdue</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label for="subjectFilter">Subject:</label>
+              <select id="subjectFilter">
+                <option value="all">All Subjects</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label for="sortBy">Sort By:</label>
+              <select id="sortBy">
+                <option value="deadline-asc">⏰ Deadline (Earliest)</option>
+                <option value="deadline-desc">⏰ Deadline (Latest)</option>
+                <option value="priority-desc">🎯 Priority (High to Low)</option>
+                <option value="title-asc">📝 Title (A to Z)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Utility Bar: Samples & Clear All -->
+          <div class="utility-row">
+            <span id="resultsCount" class="results-count">Showing 0 assignments</span>
+            <div class="utility-buttons">
+              <button id="resetSamplesBtn" class="btn-text" title="Reload default sample assignments">
+                🔄 Load Samples
+              </button>
+              <button id="clearAllBtn" class="btn-text btn-text-danger" title="Clear all assignments">
+                🗑️ Clear All
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assignments Grid Container -->
+        <div id="assignmentsContainer" class="assignments-grid">
+          <!-- Dynamically populated by script.js -->
+        </div>
+
+        <!-- Empty State Message -->
+        <div id="emptyState" class="empty-state-card hidden">
+          <div class="empty-icon">🎉</div>
+          <h3>No assignments yet, add one 🎉</h3>
+          <p>Fill out the form on the left to start tracking your LPU continuous assessments and lab work!</p>
+        </div>
+
+        <!-- No Filter Results Message -->
+        <div id="noResultsState" class="empty-state-card hidden">
+          <div class="empty-icon">🔍</div>
+          <h3>No matching assignments found</h3>
+          <p>Try adjusting your search query or reset the filters.</p>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- Simple Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>Made with ❤️ by <strong>Rahul Sharma</strong>, B.Tech CSE, Lovely Professional University (LPU)</p>
+      <p class="footer-note">Designed for LPU students to track Continuous Assessment (CA) & Lab Files without missing deadlines.</p>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
