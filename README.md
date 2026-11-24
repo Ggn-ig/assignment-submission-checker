@@ -62,4 +62,4 @@ assignment-submission-checker/
 
 ## 👨‍💻 Author
 
-Made with ❤️ by **Rahul Sharma**, B.Tech CSE, Lovely Professional University (LPU).
+Made with ❤️ by **Gagandeep kaur**, B.Tech CSE, Lovely Professional University (LPU).
